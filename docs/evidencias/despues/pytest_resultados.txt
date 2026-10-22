@@ -1,17 +1,86 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /usr/bin/python3
 rootdir: /home/claude/gestion-solicitudes
 configfile: pyproject.toml
 testpaths: tests
 plugins: platformdirs-4.12.3, anyio-4.15.1, cov-7.1.0
-collected 73 items
+collecting ... collected 75 items
 
-tests/test_caracterizacion.py ..                                         [  2%]
-tests/test_cli.py ..............                                         [ 21%]
-tests/test_dominio.py ..............................                     [ 63%]
-tests/test_reportes.py ......                                            [ 71%]
-tests/test_repositorio.py ........                                       [ 82%]
-tests/test_servicio.py .............                                     [100%]
+tests/test_caracterizacion.py::test_salida_de_la_cli_coincide_con_golden_master PASSED [  1%]
+tests/test_caracterizacion.py::test_archivo_de_datos_conserva_formato_y_contenido PASSED [  2%]
+tests/test_cli.py::test_entradas_mal_formadas_se_informan_sin_traceback[argumentos0-ERROR: id de solicitud invalido: abc] PASSED [  4%]
+tests/test_cli.py::test_entradas_mal_formadas_se_informan_sin_traceback[argumentos1-ERROR: id de solicitud invalido: x1] PASSED [  5%]
+tests/test_cli.py::test_entradas_mal_formadas_se_informan_sin_traceback[argumentos2-uso: python app.py estado ID ESTADO] PASSED [  6%]
+tests/test_cli.py::test_entradas_mal_formadas_se_informan_sin_traceback[argumentos3-uso: python app.py asignar ID RESPONSABLE] PASSED [  8%]
+tests/test_cli.py::test_entradas_mal_formadas_se_informan_sin_traceback[argumentos4-ERROR: filtro invalido: estado (use clave=valor)] PASSED [  9%]
+tests/test_cli.py::test_entradas_mal_formadas_se_informan_sin_traceback[argumentos5-ERROR: estado invalido: archivada] PASSED [ 10%]
+tests/test_cli.py::test_entradas_mal_formadas_se_informan_sin_traceback[argumentos6-ERROR: filtro desconocido: color (use estado, tipo, prioridad o legajo)] PASSED [ 12%]
+tests/test_cli.py::test_entradas_mal_formadas_se_informan_sin_traceback[argumentos7-ERROR: fecha invalida: 01/10/2026 (use AAAA-MM-DD)] PASSED [ 13%]
+tests/test_cli.py::test_archivo_danado_se_informa PASSED                 [ 14%]
+tests/test_cli.py::test_init_regenera_un_archivo_danado PASSED           [ 16%]
+tests/test_cli.py::test_registrar_sin_fecha_usa_el_reloj PASSED          [ 17%]
+tests/test_cli.py::test_sin_argumentos_muestra_el_uso PASSED             [ 18%]
+tests/test_cli.py::test_flujo_feliz_completo_en_proceso PASSED           [ 20%]
+tests/test_cli.py::test_comando_desconocido PASSED                       [ 21%]
+tests/test_dominio.py::test_vencimiento_depende_de_la_prioridad[Prioridad.ALTA-vencimiento_esperado0] PASSED [ 22%]
+tests/test_dominio.py::test_vencimiento_depende_de_la_prioridad[Prioridad.MEDIA-vencimiento_esperado1] PASSED [ 24%]
+tests/test_dominio.py::test_vencimiento_depende_de_la_prioridad[Prioridad.BAJA-vencimiento_esperado2] PASSED [ 25%]
+tests/test_dominio.py::test_cada_tipo_se_deriva_a_su_area[TipoSolicitud.CERTIFICADO-Bedelia] PASSED [ 26%]
+tests/test_dominio.py::test_cada_tipo_se_deriva_a_su_area[TipoSolicitud.CAMBIO_COMISION-Bedelia] PASSED [ 28%]
+tests/test_dominio.py::test_cada_tipo_se_deriva_a_su_area[TipoSolicitud.EQUIVALENCIA-Departamento Academico] PASSED [ 29%]
+tests/test_dominio.py::test_cada_tipo_se_deriva_a_su_area[TipoSolicitud.RECLAMO_NOTA-Docencia] PASSED [ 30%]
+tests/test_dominio.py::test_una_solicitud_nueva_empieza_pendiente_y_sin_responsable PASSED [ 32%]
+tests/test_dominio.py::test_flujo_completo_pendiente_en_proceso_resuelta PASSED [ 33%]
+tests/test_dominio.py::test_se_puede_rechazar_directamente_desde_pendiente PASSED [ 34%]
+tests/test_dominio.py::test_transiciones_invalidas[True-previos0-Estado.RESUELTA-no se puede resolver una solicitud que no esta en proceso] PASSED [ 36%]
+tests/test_dominio.py::test_transiciones_invalidas[False-previos1-Estado.EN_PROCESO-la solicitud #10 no tiene responsable asignado] PASSED [ 37%]
+tests/test_dominio.py::test_transiciones_invalidas[True-previos2-Estado.PENDIENTE-la solicitud ya esta en ese estado] PASSED [ 38%]
+tests/test_dominio.py::test_transiciones_invalidas[True-previos3-Estado.PENDIENTE-no se puede volver a pendiente] PASSED [ 40%]
+tests/test_dominio.py::test_transiciones_invalidas[True-previos4-Estado.RECHAZADA-la solicitud #10 ya esta cerrada] PASSED [ 41%]
+tests/test_dominio.py::test_no_se_puede_asignar_un_responsable_de_otra_area PASSED [ 42%]
+tests/test_dominio.py::test_no_se_puede_asignar_una_solicitud_cerrada PASSED [ 44%]
+tests/test_dominio.py::test_vencimiento_en_el_borde[hoy0-False] PASSED   [ 45%]
+tests/test_dominio.py::test_vencimiento_en_el_borde[hoy1-True] PASSED    [ 46%]
+tests/test_dominio.py::test_una_solicitud_cerrada_nunca_esta_vencida PASSED [ 48%]
+tests/test_dominio.py::test_descripciones_invalidas[None-obligatoria] PASSED [ 49%]
+tests/test_dominio.py::test_descripciones_invalidas[-obligatoria] PASSED [ 50%]
+tests/test_dominio.py::test_descripciones_invalidas[   -obligatoria] PASSED [ 52%]
+tests/test_dominio.py::test_descripciones_invalidas[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-supera los 200] PASSED [ 53%]
+tests/test_dominio.py::test_descripcion_en_el_limite_es_valida_y_se_normaliza PASSED [ 54%]
+tests/test_dominio.py::test_textos_desconocidos_se_rechazan_con_mensaje_claro[Estado-archivada-estado invalido: archivada] PASSED [ 56%]
+tests/test_dominio.py::test_textos_desconocidos_se_rechazan_con_mensaje_claro[Prioridad-urgente-prioridad invalida: urgente] PASSED [ 57%]
+tests/test_dominio.py::test_textos_desconocidos_se_rechazan_con_mensaje_claro[TipoSolicitud-beca-tipo de solicitud invalido: beca] PASSED [ 58%]
+tests/test_dominio.py::test_filtro_combina_criterios PASSED              [ 60%]
+tests/test_dominio.py::test_filtro_con_clave_desconocida_se_rechaza PASSED [ 61%]
+tests/test_reportes.py::test_resumen_cuenta_por_estado_area_y_vencidas PASSED [ 62%]
+tests/test_reportes.py::test_las_vencidas_dependen_del_dia_inyectado PASSED [ 64%]
+tests/test_reportes.py::test_resumen_de_repositorio_vacio PASSED         [ 65%]
+tests/test_reportes.py::test_formato_csv PASSED                          [ 66%]
+tests/test_reportes.py::test_formato_desconocido PASSED                  [ 68%]
+tests/test_reportes.py::test_un_formato_nuevo_se_agrega_sin_modificar_el_generador PASSED [ 69%]
+tests/test_repositorio.py::test_contrato_consultas[memoria] PASSED       [ 70%]
+tests/test_repositorio.py::test_contrato_consultas[json] PASSED          [ 72%]
+tests/test_repositorio.py::test_contrato_alta_y_modificacion[memoria] PASSED [ 73%]
+tests/test_repositorio.py::test_contrato_alta_y_modificacion[json] PASSED [ 74%]
+tests/test_repositorio.py::test_json_persiste_con_el_formato_de_la_version_inicial PASSED [ 76%]
+tests/test_repositorio.py::test_json_relee_lo_que_escribio PASSED        [ 77%]
+tests/test_repositorio.py::test_archivo_inexistente_equivale_a_repositorio_vacio PASSED [ 78%]
+tests/test_repositorio.py::test_archivo_danado_se_informa_en_lugar_de_silenciarse PASSED [ 80%]
+tests/test_repositorio.py::test_la_escritura_es_atomica_y_no_deja_temporales PASSED [ 81%]
+tests/test_repositorio.py::test_no_quedan_archivos_temporales PASSED     [ 82%]
+tests/test_servicio.py::test_registrar_usa_la_fecha_del_reloj_inyectado PASSED [ 84%]
+tests/test_servicio.py::test_registrar_respeta_el_orden_de_validacion PASSED [ 85%]
+tests/test_servicio.py::test_registrar_con_fecha_invalida_informa_el_formato PASSED [ 86%]
+tests/test_servicio.py::test_cambiar_estado_guarda_y_notifica_una_sola_vez PASSED [ 88%]
+tests/test_servicio.py::test_una_transicion_invalida_no_notifica PASSED  [ 89%]
+tests/test_servicio.py::test_asignar_con_referencias_inexistentes[99-R1-no existe la solicitud #99] PASSED [ 90%]
+tests/test_servicio.py::test_asignar_con_referencias_inexistentes[3-R9-no existe el responsable R9] PASSED [ 92%]
+tests/test_servicio.py::test_asignar_devuelve_solicitud_y_responsable PASSED [ 93%]
+tests/test_servicio.py::test_buscar_con_filtros[criterios0-ids_esperados0] PASSED [ 94%]
+tests/test_servicio.py::test_buscar_con_filtros[criterios1-ids_esperados1] PASSED [ 96%]
+tests/test_servicio.py::test_buscar_con_filtros[criterios2-ids_esperados2] PASSED [ 97%]
+tests/test_servicio.py::test_buscar_con_filtros[criterios3-ids_esperados3] PASSED [ 98%]
+tests/test_servicio.py::test_buscar_con_filtros[criterios4-ids_esperados4] PASSED [100%]
 
 ================================ tests coverage ================================
 _______________ coverage: platform linux, python 3.13.16-final-0 _______________
@@ -20,12 +89,12 @@ Name                            Stmts   Miss Branch BrPart  Cover   Missing
 ---------------------------------------------------------------------------
 solicitudes/__init__.py             0      0      0      0   100%
 solicitudes/cli.py                 88      0     18      0   100%
-solicitudes/dominio.py            143      1     22      0    99%   37
+solicitudes/dominio.py            144      1     22      0    99%   38
 solicitudes/notificaciones.py       9      0      0      0   100%
 solicitudes/reportes.py            42      0      2      0   100%
-solicitudes/repositorio.py         59      0      2      0   100%
+solicitudes/repositorio.py         62      0      2      0   100%
 solicitudes/semilla.py              1      0      0      0   100%
 solicitudes/servicio.py            43      0      6      0   100%
 ---------------------------------------------------------------------------
-TOTAL                             385      1     50      0    99%
-============================== 73 passed in 2.99s ==============================
+TOTAL                             389      1     50      0    99%
+============================== 75 passed in 3.00s ==============================

@@ -1,11 +1,11 @@
 == Golden master ejecutado sobre el tag estado-inicial (version base) ==
-commit ff385e5 feat: prototipo inicial de gestión de solicitudes académicas
+commit (tag estado-inicial) feat: prototipo inicial de gestión de solicitudes académicas
 tests/test_caracterizacion.py::test_salida_de_la_cli_coincide_con_golden_master PASSED [ 50%]
 tests/test_caracterizacion.py::test_archivo_de_datos_conserva_formato_y_contenido PASSED [100%]
 ============================== 2 passed in 1.49s ===============================
 
 == Golden master ejecutado sobre la version refactorizada (HEAD) ==
-commit ef73086 refactor(R-04): Strategy para reportes (OCP) y CLI con tabla de comandos
+commit (tag etapa-refactoring) refactor(R-04): Strategy para reportes (OCP) y CLI con tabla de comandos
 tests/test_caracterizacion.py::test_salida_de_la_cli_coincide_con_golden_master PASSED [ 50%]
 tests/test_caracterizacion.py::test_archivo_de_datos_conserva_formato_y_contenido PASSED [100%]
 ============================== 2 passed in 2.88s ===============================

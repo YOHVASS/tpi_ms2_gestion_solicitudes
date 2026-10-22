@@ -54,6 +54,8 @@ Prioridad = impacto en el costo del cambio × probabilidad de que esa zona cambi
 | D-02 | Faltan argumentos → `IndexError` | `app.py estado 4` | Corregir: mostrar uso |
 | D-03 | Filtro sin `=` → `ValueError` | `app.py buscar estado` | Corregir: mensaje de error |
 | D-04 | Archivo de datos dañado se ignora en silencio | `datos.json` truncado + `app.py reporte` | Corregir: informar el error y no continuar |
+| D-05 | Valor de filtro desconocido se ignora y devuelve todo | `app.py buscar estado=archivada` | Corregir: informar el valor inválido (*detectado durante R-02*) |
+| D-06 | Fecha con formato inválido → `ValueError` | `app.py registrar 1001 certificado alta x 01/10/2026` | Corregir: informar el formato esperado (*detectado durante R-03*) |
 
 Estas correcciones **mejoran** el comportamiento externo sin alterar los casos ya
 aprobados en el golden master.

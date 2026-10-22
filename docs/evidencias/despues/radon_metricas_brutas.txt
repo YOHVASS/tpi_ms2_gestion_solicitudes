@@ -59,21 +59,21 @@ solicitudes/semilla.py
         (C % S): 0%
         (C + M % L): 0%
 solicitudes/repositorio.py
-    LOC: 158
-    LLOC: 88
-    SLOC: 103
-    Comments: 5
-    Single comments: 10
+    LOC: 162
+    LLOC: 91
+    SLOC: 106
+    Comments: 6
+    Single comments: 11
     Multi: 6
     Blank: 39
     - Comment Stats
-        (C % L): 3%
-        (C % S): 5%
+        (C % L): 4%
+        (C % S): 6%
         (C + M % L): 7%
 solicitudes/dominio.py
-    LOC: 249
-    LLOC: 182
-    SLOC: 177
+    LOC: 250
+    LLOC: 184
+    SLOC: 178
     Comments: 1
     Single comments: 11
     Multi: 0
@@ -107,14 +107,14 @@ solicitudes/notificaciones.py
         (C % S): 0%
         (C + M % L): 0%
 ** Total **
-    LOC: 814
-    LLOC: 487
-    SLOC: 584
-    Comments: 9
-    Single comments: 29
+    LOC: 819
+    LLOC: 492
+    SLOC: 588
+    Comments: 10
+    Single comments: 30
     Multi: 19
     Blank: 182
     - Comment Stats
         (C % L): 1%
         (C % S): 2%
-        (C + M % L): 3%
+        (C + M % L): 4%

@@ -2,7 +2,7 @@
 
 ## 1. Red de seguridad previa al refactoring: golden master
 
-Antes de tocar el código (commit `c6dae0a`, tag `etapa-diagnostico`) se escribió
+Antes de tocar el código (commit «test: pruebas de caracterización», tag `etapa-diagnostico`) se escribió
 una **prueba de caracterización** que ejecuta la CLI real en 38 pasos
 (`tests/escenario.py`) y guarda como "salida aprobada":
 
@@ -24,11 +24,11 @@ Evidencia: `docs/evidencias/verificacion_golden_master.txt`
 |---|---|---|---|
 | `test_dominio.py` | Reglas de la entidad `Solicitud`, enums, validaciones, filtros | AAA, parametrización, casos de borde (200/201 caracteres, día de vencimiento) | 30 |
 | `test_servicio.py` | Casos de uso | Fake (repositorio en memoria), stub (reloj fijo), mock (notificador), escenario Dado/Cuando/Entonces | 13 |
-| `test_repositorio.py` | Contrato del repositorio sobre las 2 implementaciones (LSP), formato JSON compatible, archivo dañado | Pruebas de contrato parametrizadas | 8 |
+| `test_repositorio.py` | Contrato del repositorio sobre las 2 implementaciones (LSP), formato JSON compatible, archivo dañado, escritura atómica | Pruebas de contrato parametrizadas, monkeypatch | 10 |
 | `test_reportes.py` | Cálculo del resumen, formatos, extensión con formato nuevo (OCP) | Estrategia inyectada | 6 |
 | `test_cli.py` | Regresión de los defectos D-01 a D-06 y flujo feliz en proceso | Salida capturada, reloj inyectado | 14 |
 | `test_caracterizacion.py` | Comportamiento externo completo | Golden master | 2 |
-| **Total** | | | **73** |
+| **Total** | | | **75** |
 
 ## 3. Casos de prueba representativos
 
@@ -52,7 +52,7 @@ Evidencia: `docs/evidencias/verificacion_golden_master.txt`
 
 ## 4. Cobertura
 
-Cobertura de sentencias y ramas: **99 %** (385 sentencias, 50 ramas; la única
+Cobertura de sentencias y ramas: **99 %** (389 sentencias, 50 ramas; la única
 línea sin cubrir es el `raise NotImplementedError` del método abstracto
 `_EnumDeTexto.mensaje_invalido`). Detalle en
 `docs/evidencias/despues/pytest_resultados.txt`.
