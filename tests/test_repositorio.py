@@ -66,3 +66,23 @@ def test_archivo_danado_se_informa_en_lugar_de_silenciarse(tmp_path):
     ruta.write_text('{"estudiantes": [', encoding="utf-8")
     with pytest.raises(ErrorDeDatos, match="no se pudo leer datos.json"):
         RepositorioJSON(ruta)
+
+
+def test_la_escritura_es_atomica_y_no_deja_temporales(tmp_path, monkeypatch):
+    ruta = tmp_path / "datos.json"
+    repositorio = RepositorioJSON(ruta, cargar=False)
+    repositorio.inicializar(copy.deepcopy(DATOS_EJEMPLO))
+    contenido_original = ruta.read_text(encoding="utf-8")
+
+    def corte_de_luz(*_args):
+        raise OSError("disco desconectado")
+
+    monkeypatch.setattr("solicitudes.repositorio.os.replace", corte_de_luz)
+    with pytest.raises(OSError):
+        repositorio.guardar_solicitud(repositorio.obtener_solicitud(3))
+    assert ruta.read_text(encoding="utf-8") == contenido_original  # el archivo bueno sigue intacto
+
+
+def test_no_quedan_archivos_temporales(tmp_path):
+    RepositorioJSON(tmp_path / "datos.json", cargar=False).inicializar(copy.deepcopy(DATOS_EJEMPLO))
+    assert [p.name for p in tmp_path.iterdir()] == ["datos.json"]

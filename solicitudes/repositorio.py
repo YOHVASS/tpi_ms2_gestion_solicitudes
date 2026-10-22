@@ -9,6 +9,7 @@ que necesitan los reportes (ISP).
 from __future__ import annotations
 
 import json
+import os
 from datetime import date
 from pathlib import Path
 from typing import Protocol
@@ -124,8 +125,11 @@ class RepositorioJSON(RepositorioEnMemoria):
             ) from error
 
     def _persistir(self) -> None:
+        # Escritura atómica: si el proceso se interrumpe, el archivo anterior queda intacto.
         contenido = json.dumps(self._a_diccionario(), indent=2, ensure_ascii=False)
-        self._ruta.write_text(contenido, encoding="utf-8")
+        temporal = self._ruta.with_name(self._ruta.name + ".tmp")
+        temporal.write_text(contenido, encoding="utf-8")
+        os.replace(temporal, self._ruta)
 
 
 def _solicitud_desde_dict(datos: dict) -> Solicitud:

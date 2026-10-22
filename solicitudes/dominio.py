@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, timedelta
 from enum import Enum
+from typing import ClassVar
 
 LONGITUD_MAXIMA_DESCRIPCION = 200
 
@@ -137,7 +138,7 @@ class FiltroSolicitudes:
     prioridad: Prioridad | None = None
     legajo: str | None = None
 
-    CLAVES = ("estado", "tipo", "prioridad", "legajo")
+    CLAVES: ClassVar[tuple[str, ...]] = ("estado", "tipo", "prioridad", "legajo")
 
     @classmethod
     def desde_texto(cls, criterios: dict[str, str]) -> FiltroSolicitudes:
