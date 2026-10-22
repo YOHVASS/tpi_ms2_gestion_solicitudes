@@ -19,6 +19,48 @@ class Sistema:
         except:
             pass  # si no hay archivo arrancamos vacio
 
+    def _guardar(self):
+        with open(ARCHIVO, "w", encoding="utf-8") as archivo:
+            json.dump(self.d, archivo, indent=2, ensure_ascii=False)
+
+    def _buscar_solicitud(self, id_solicitud):
+        for solicitud in self.d["solicitudes"]:
+            if solicitud["id"] == int(id_solicitud):
+                return solicitud
+        return None
+
+    def _buscar_estudiante(self, legajo):
+        for estudiante in self.d["estudiantes"]:
+            if estudiante["legajo"] == legajo:
+                return estudiante
+        return None
+
+    def _buscar_responsable(self, id_responsable):
+        for responsable in self.d["responsables"]:
+            if responsable["id"] == id_responsable:
+                return responsable
+        return None
+
+    @staticmethod
+    def _esta_cerrada(solicitud):
+        return solicitud["estado"] in (2, 3)
+
+    @staticmethod
+    def _validar_descripcion(descripcion):
+        if descripcion is None or len(descripcion.strip()) == 0:
+            return "la descripcion es obligatoria"
+        if len(descripcion) > 200:
+            return "la descripcion supera los 200 caracteres"
+        return None
+
+    @staticmethod
+    def _calcular_vencimiento(fecha, prioridad):
+        if prioridad == 1:
+            return fecha + timedelta(days=2)
+        if prioridad == 2:
+            return fecha + timedelta(days=5)
+        return fecha + timedelta(days=10)
+
     def init(self):
         self.d = {
             "estudiantes": [
@@ -40,20 +82,14 @@ class Sistema:
                  "estado": 0, "area": "Docencia", "responsable": None, "fecha": "2099-01-10", "vence": "2099-01-20"},
             ],
         }
-        f = open(ARCHIVO, "w", encoding="utf-8")
-        json.dump(self.d, f, indent=2, ensure_ascii=False)
-        f.close()
+        self._guardar()
         print("OK: datos de ejemplo cargados")
         return True
 
     # registra una solicitud nueva
     def registrar(self, legajo, tipo, prioridad, descripcion, fecha_str, canal, observaciones):
         # validar estudiante
-        est = None
-        for e in self.d["estudiantes"]:
-            if e["legajo"] == legajo:
-                est = e
-        if est == None:
+        if self._buscar_estudiante(legajo) is None:
             print("ERROR: el legajo " + legajo + " no existe")
             return -1
         # validar tipo y calcular area
@@ -79,42 +115,30 @@ class Sistema:
             print("ERROR: prioridad invalida: " + prioridad)
             return -1
         # validar descripcion
-        if descripcion == None or len(descripcion.strip()) == 0:
-            print("ERROR: la descripcion es obligatoria")
-            return -1
-        if len(descripcion) > 200:
-            print("ERROR: la descripcion supera los 200 caracteres")
+        error = self._validar_descripcion(descripcion)
+        if error is not None:
+            print("ERROR: " + error)
             return -1
         # fecha
-        if fecha_str == None:
+        if fecha_str is None:
             fecha = datetime.now()
         else:
             fecha = datetime.strptime(fecha_str, "%Y-%m-%d")
         # calcular vencimiento segun prioridad
-        if p == 1:
-            vence = fecha + timedelta(days=2)
-        elif p == 2:
-            vence = fecha + timedelta(days=5)
-        else:
-            vence = fecha + timedelta(days=10)
+        vence = self._calcular_vencimiento(fecha, p)
         nuevo_id = len(self.d["solicitudes"]) + 1
         s = {"id": nuevo_id, "legajo": legajo, "tipo": tipo, "prioridad": p, "descripcion": descripcion.strip(),
              "estado": 0, "area": area, "responsable": None, "fecha": fecha.strftime("%Y-%m-%d"),
              "vence": vence.strftime("%Y-%m-%d")}
         # canal y observaciones por ahora no se usan
         self.d["solicitudes"].append(s)
-        f = open(ARCHIVO, "w", encoding="utf-8")
-        json.dump(self.d, f, indent=2, ensure_ascii=False)
-        f.close()
+        self._guardar()
         print("OK: solicitud #" + str(nuevo_id) + " registrada (area: " + area + ", vence: " + s["vence"] + ")")
         return nuevo_id
 
     def cambiar_estado(self, id, nuevo):
-        x = None
-        for s in self.d["solicitudes"]:
-            if s["id"] == int(id):
-                x = s
-        if x == None:
+        solicitud = self._buscar_solicitud(id)
+        if solicitud is None:
             print("ERROR: no existe la solicitud #" + str(id))
             return False
         if nuevo == "pendiente":
@@ -129,58 +153,48 @@ class Sistema:
             print("ERROR: estado invalido: " + nuevo)
             return False
         # reglas de transicion
-        if x["estado"] == 2 or x["estado"] == 3:
+        if self._esta_cerrada(solicitud):
             print("ERROR: la solicitud #" + str(id) + " ya esta cerrada")
             return False
-        if x["estado"] == 0 and n == 2:
+        if solicitud["estado"] == 0 and n == 2:
             print("ERROR: no se puede resolver una solicitud que no esta en proceso")
             return False
-        if n == 1 and x["responsable"] == None:
+        if n == 1 and solicitud["responsable"] is None:
             print("ERROR: la solicitud #" + str(id) + " no tiene responsable asignado")
             return False
-        if n == x["estado"]:
+        if n == solicitud["estado"]:
             print("ERROR: la solicitud ya esta en ese estado")
             return False
         if n == 0:
             print("ERROR: no se puede volver a pendiente")
             return False
-        x["estado"] = n
-        f = open(ARCHIVO, "w", encoding="utf-8")
-        json.dump(self.d, f, indent=2, ensure_ascii=False)
-        f.close()
+        solicitud["estado"] = n
+        self._guardar()
         # notificar al estudiante
-        for e in self.d["estudiantes"]:
-            if e["legajo"] == x["legajo"]:
-                print("[EMAIL a " + e["email"] + "] Su solicitud #" + str(x["id"]) + " cambio a estado: " + nuevo)
-        print("OK: solicitud #" + str(x["id"]) + " ahora esta " + nuevo)
+        estudiante = self._buscar_estudiante(solicitud["legajo"])
+        print("[EMAIL a " + estudiante["email"] + "] Su solicitud #" + str(solicitud["id"])
+              + " cambio a estado: " + nuevo)
+        print("OK: solicitud #" + str(solicitud["id"]) + " ahora esta " + nuevo)
         return True
 
     def asignar(self, id, resp_id):
-        x = None
-        for s in self.d["solicitudes"]:
-            if s["id"] == int(id):
-                x = s
-        if x == None:
+        solicitud = self._buscar_solicitud(id)
+        if solicitud is None:
             print("ERROR: no existe la solicitud #" + str(id))
             return False
-        r = None
-        for rr in self.d["responsables"]:
-            if rr["id"] == resp_id:
-                r = rr
-        if r == None:
+        responsable = self._buscar_responsable(resp_id)
+        if responsable is None:
             print("ERROR: no existe el responsable " + resp_id)
             return False
-        if x["estado"] == 2 or x["estado"] == 3:
+        if self._esta_cerrada(solicitud):
             print("ERROR: la solicitud #" + str(id) + " ya esta cerrada")
             return False
-        if r["area"] != x["area"]:
-            print("ERROR: " + r["nombre"] + " no pertenece al area " + x["area"])
+        if responsable["area"] != solicitud["area"]:
+            print("ERROR: " + responsable["nombre"] + " no pertenece al area " + solicitud["area"])
             return False
-        x["responsable"] = resp_id
-        f = open(ARCHIVO, "w", encoding="utf-8")
-        json.dump(self.d, f, indent=2, ensure_ascii=False)
-        f.close()
-        print("OK: solicitud #" + str(x["id"]) + " asignada a " + r["nombre"])
+        solicitud["responsable"] = resp_id
+        self._guardar()
+        print("OK: solicitud #" + str(solicitud["id"]) + " asignada a " + responsable["nombre"])
         return True
 
     def buscar(self, estado, tipo, prioridad, legajo):
@@ -214,10 +228,8 @@ class Sistema:
         for s in l:
             est = ["pendiente", "en_proceso", "resuelta", "rechazada"][s["estado"]]
             pr = ["", "alta", "media", "baja"][s["prioridad"]]
-            resp = "-"
-            for rr in self.d["responsables"]:
-                if rr["id"] == s["responsable"]:
-                    resp = rr["nombre"]
+            responsable = self._buscar_responsable(s["responsable"])
+            resp = responsable["nombre"] if responsable else "-"
             print("#" + str(s["id"]) + " | " + s["legajo"] + " | " + s["tipo"] + " | " + pr + " | " + est + " | " + resp + " | " + s["descripcion"])
         return l
 
