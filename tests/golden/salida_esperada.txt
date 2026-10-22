@@ -1,0 +1,195 @@
+$ app.py init
+OK: datos de ejemplo cargados
+[exit=0]
+
+$ app.py registrar 1001 certificado alta Constancia de examen final 2026-10-01
+OK: solicitud #4 registrada (area: Bedelia, vence: 2026-10-03)
+[exit=0]
+
+$ app.py registrar 1002 cambio_comision media Cambio a comisión 7 2026-10-02
+OK: solicitud #5 registrada (area: Bedelia, vence: 2026-10-07)
+[exit=0]
+
+$ app.py registrar 1003 equivalencia baja   Equivalencia de Base de Datos   2026-10-03
+OK: solicitud #6 registrada (area: Departamento Academico, vence: 2026-10-13)
+[exit=0]
+
+$ app.py registrar 1001 reclamo_nota alta Reclamo nota TP integrador 2099-05-01
+OK: solicitud #7 registrada (area: Docencia, vence: 2099-05-03)
+[exit=0]
+
+$ app.py registrar 9999 certificado alta Legajo inexistente 2026-10-01
+ERROR: el legajo 9999 no existe
+[exit=1]
+
+$ app.py registrar 1001 beca alta Tipo inexistente 2026-10-01
+ERROR: tipo de solicitud invalido: beca
+[exit=1]
+
+$ app.py registrar 1001 certificado urgente Prioridad inexistente 2026-10-01
+ERROR: prioridad invalida: urgente
+[exit=1]
+
+$ app.py registrar 1001 certificado alta     2026-10-01
+ERROR: la descripcion es obligatoria
+[exit=1]
+
+$ app.py registrar 1001 certificado alta xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 2026-10-01
+ERROR: la descripcion supera los 200 caracteres
+[exit=1]
+
+$ app.py registrar 1001 certificado
+uso: python app.py registrar LEGAJO TIPO PRIORIDAD DESCRIPCION [FECHA]
+[exit=1]
+
+$ app.py asignar 4 R1
+OK: solicitud #4 asignada a Marta Ruiz
+[exit=0]
+
+$ app.py asignar 4 R2
+ERROR: Jorge Paz no pertenece al area Bedelia
+[exit=1]
+
+$ app.py asignar 4 R9
+ERROR: no existe el responsable R9
+[exit=1]
+
+$ app.py asignar 99 R1
+ERROR: no existe la solicitud #99
+[exit=1]
+
+$ app.py asignar 1 R1
+ERROR: la solicitud #1 ya esta cerrada
+[exit=1]
+
+$ app.py asignar 6 R2
+OK: solicitud #6 asignada a Jorge Paz
+[exit=0]
+
+$ app.py estado 5 en_proceso
+ERROR: la solicitud #5 no tiene responsable asignado
+[exit=1]
+
+$ app.py estado 4 resuelta
+ERROR: no se puede resolver una solicitud que no esta en proceso
+[exit=1]
+
+$ app.py estado 4 en_proceso
+[EMAIL a ana.lopez@example.edu] Su solicitud #4 cambio a estado: en_proceso
+OK: solicitud #4 ahora esta en_proceso
+[exit=0]
+
+$ app.py estado 4 en_proceso
+ERROR: la solicitud ya esta en ese estado
+[exit=1]
+
+$ app.py estado 4 pendiente
+ERROR: no se puede volver a pendiente
+[exit=1]
+
+$ app.py estado 4 archivada
+ERROR: estado invalido: archivada
+[exit=1]
+
+$ app.py estado 4 resuelta
+[EMAIL a ana.lopez@example.edu] Su solicitud #4 cambio a estado: resuelta
+OK: solicitud #4 ahora esta resuelta
+[exit=0]
+
+$ app.py estado 4 rechazada
+ERROR: la solicitud #4 ya esta cerrada
+[exit=1]
+
+$ app.py estado 99 resuelta
+ERROR: no existe la solicitud #99
+[exit=1]
+
+$ app.py estado 3 rechazada
+[EMAIL a carla.gomez@example.edu] Su solicitud #3 cambio a estado: rechazada
+OK: solicitud #3 ahora esta rechazada
+[exit=0]
+
+$ app.py buscar
+#1 | 1001 | certificado | media | resuelta | Marta Ruiz | Certificado de alumno regular
+#2 | 1002 | equivalencia | alta | en_proceso | Jorge Paz | Equivalencia de Programacion I
+#3 | 1003 | reclamo_nota | baja | rechazada | - | Revision de nota del parcial 1
+#4 | 1001 | certificado | alta | resuelta | Marta Ruiz | Constancia de examen final
+#5 | 1002 | cambio_comision | media | pendiente | - | Cambio a comisión 7
+#6 | 1003 | equivalencia | baja | pendiente | Jorge Paz | Equivalencia de Base de Datos
+#7 | 1001 | reclamo_nota | alta | pendiente | - | Reclamo nota TP integrador
+[exit=0]
+
+$ app.py buscar estado=pendiente
+#5 | 1002 | cambio_comision | media | pendiente | - | Cambio a comisión 7
+#6 | 1003 | equivalencia | baja | pendiente | Jorge Paz | Equivalencia de Base de Datos
+#7 | 1001 | reclamo_nota | alta | pendiente | - | Reclamo nota TP integrador
+[exit=0]
+
+$ app.py buscar tipo=certificado
+#1 | 1001 | certificado | media | resuelta | Marta Ruiz | Certificado de alumno regular
+#4 | 1001 | certificado | alta | resuelta | Marta Ruiz | Constancia de examen final
+[exit=0]
+
+$ app.py buscar prioridad=alta
+#2 | 1002 | equivalencia | alta | en_proceso | Jorge Paz | Equivalencia de Programacion I
+#4 | 1001 | certificado | alta | resuelta | Marta Ruiz | Constancia de examen final
+#7 | 1001 | reclamo_nota | alta | pendiente | - | Reclamo nota TP integrador
+[exit=0]
+
+$ app.py buscar legajo=1001 estado=resuelta
+#1 | 1001 | certificado | media | resuelta | Marta Ruiz | Certificado de alumno regular
+#4 | 1001 | certificado | alta | resuelta | Marta Ruiz | Constancia de examen final
+[exit=0]
+
+$ app.py buscar estado=rechazada tipo=equivalencia
+No se encontraron solicitudes
+[exit=0]
+
+$ app.py reporte
+=== REPORTE DE SOLICITUDES ===
+Total: 7
+Pendientes: 3
+En proceso: 1
+Resueltas: 2
+Rechazadas: 1
+Vencidas sin cerrar: 3
+Por area:
+  Bedelia: 3
+  Departamento Academico: 2
+  Docencia: 2
+[exit=0]
+
+$ app.py reporte texto
+=== REPORTE DE SOLICITUDES ===
+Total: 7
+Pendientes: 3
+En proceso: 1
+Resueltas: 2
+Rechazadas: 1
+Vencidas sin cerrar: 3
+Por area:
+  Bedelia: 3
+  Departamento Academico: 2
+  Docencia: 2
+[exit=0]
+
+$ app.py reporte csv
+metrica,valor
+total,7
+pendientes,3
+en_proceso,1
+resueltas,2
+rechazadas,1
+vencidas,3
+area:Bedelia,3
+area:Departamento Academico,2
+area:Docencia,2
+[exit=0]
+
+$ app.py reporte pdf
+ERROR: formato de reporte invalido: pdf
+[exit=1]
+
+$ app.py borrar 1
+ERROR: comando desconocido borrar
+[exit=1]

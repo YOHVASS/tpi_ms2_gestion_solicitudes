@@ -1,0 +1,24 @@
+[project]
+name = "gestion-solicitudes"
+version = "1.0.0"
+description = "Sistema de Gestión de Solicitudes Académicas (TPI Metodología de Sistemas II)"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+# Conjunto acordado para el TPI: errores, estilo, bugs probables, complejidad,
+# nombres, simplificaciones, Pylint, retornos y excepciones demasiado amplias.
+select = ["E", "F", "W", "B", "C90", "N", "SIM", "PL", "RET", "BLE", "UP", "ARG"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 8
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PLR2004"]
