@@ -17,6 +17,10 @@ target-version = "py310"
 # nombres, simplificaciones, Pylint, retornos y excepciones demasiado amplias.
 select = ["E", "F", "W", "B", "C90", "N", "SIM", "PL", "RET", "BLE", "UP", "ARG"]
 
+# N818: en español las excepciones usan el prefijo "Error" (ErrorDeNegocio),
+# no el sufijo inglés. Decisión registrada en docs/code-review.md (OBS-06).
+ignore = ["N818"]
+
 [tool.ruff.lint.mccabe]
 max-complexity = 8
 

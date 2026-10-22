@@ -19,6 +19,7 @@ from solicitudes.dominio import (
     Responsable,
     Solicitud,
     TipoSolicitud,
+    parsear_fecha,
     validar_descripcion,
 )
 from solicitudes.notificaciones import Notificador
@@ -42,20 +43,21 @@ class ServicioSolicitudes:
         tipo = TipoSolicitud.desde_texto(datos.tipo)
         prioridad = Prioridad.desde_texto(datos.prioridad)
         descripcion = validar_descripcion(datos.descripcion)
-        fecha = self._hoy() if datos.fecha is None else date.fromisoformat(datos.fecha)
-        solicitud = Solicitud.nueva(self._repositorio.proximo_id(), datos.legajo, tipo, prioridad,
-                                    descripcion, fecha)
+        fecha = self._hoy() if datos.fecha is None else parsear_fecha(datos.fecha)
+        solicitud = Solicitud.nueva(
+            self._repositorio.proximo_id(), datos.legajo, tipo, prioridad, descripcion, fecha
+        )
         self._repositorio.agregar_solicitud(solicitud)
         return solicitud
 
-    def asignar(self, id_solicitud: int, id_responsable: str) -> Responsable:
+    def asignar(self, id_solicitud: int, id_responsable: str) -> tuple[Solicitud, Responsable]:
         solicitud = self._obtener_solicitud(id_solicitud)
         responsable = self._repositorio.obtener_responsable(id_responsable)
         if responsable is None:
             raise NoEncontrado(f"no existe el responsable {id_responsable}")
         solicitud.asignar(responsable)
         self._repositorio.guardar_solicitud(solicitud)
-        return responsable
+        return solicitud, responsable
 
     def cambiar_estado(self, id_solicitud: int, texto_estado: str) -> Solicitud:
         solicitud = self._obtener_solicitud(id_solicitud)
@@ -66,27 +68,10 @@ class ServicioSolicitudes:
         return solicitud
 
     def buscar(self, filtro: FiltroSolicitudes) -> list[Solicitud]:
-        return [s for s in self._repositorio.listar_solicitudes() if _cumple(s, filtro)]
+        return [s for s in self._repositorio.listar_solicitudes() if filtro.admite(s)]
 
     def _obtener_solicitud(self, id_solicitud: int) -> Solicitud:
         solicitud = self._repositorio.obtener_solicitud(id_solicitud)
         if solicitud is None:
             raise NoEncontrado(f"no existe la solicitud #{id_solicitud}")
         return solicitud
-
-
-def _cumple(solicitud: Solicitud, filtro: FiltroSolicitudes) -> bool:
-    criterios = (
-        (filtro.estado, solicitud.estado.value, {e.value for e in Estado}),
-        (filtro.tipo, solicitud.tipo.value, None),
-        (filtro.prioridad, solicitud.prioridad.value, {p.value for p in Prioridad}),
-        (filtro.legajo, solicitud.legajo, None),
-    )
-    for buscado, valor, valores_validos in criterios:
-        if buscado is None:
-            continue
-        if valores_validos is not None and buscado not in valores_validos:
-            continue  # comportamiento heredado: un valor desconocido no filtra
-        if buscado != valor:
-            return False
-    return True

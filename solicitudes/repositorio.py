@@ -13,7 +13,15 @@ from datetime import date
 from pathlib import Path
 from typing import Protocol
 
-from solicitudes.dominio import Estado, Estudiante, Prioridad, Responsable, Solicitud, TipoSolicitud
+from solicitudes.dominio import (
+    ErrorDeDatos,
+    Estado,
+    Estudiante,
+    Prioridad,
+    Responsable,
+    Solicitud,
+    TipoSolicitud,
+)
 
 # Códigos con los que la versión inicial guardaba estados y prioridades.
 # Se conservan para que los datos.json existentes sigan siendo compatibles.
@@ -100,15 +108,20 @@ class RepositorioEnMemoria:
 class RepositorioJSON(RepositorioEnMemoria):
     """Persiste en un archivo JSON con el mismo formato que la versión inicial."""
 
-    def __init__(self, ruta: Path) -> None:
+    def __init__(self, ruta: Path, *, cargar: bool = True) -> None:
         self._ruta = Path(ruta)
-        super().__init__(self._leer_archivo())
+        super().__init__(self._leer_archivo() if cargar else {})
 
     def _leer_archivo(self) -> dict:
+        if not self._ruta.exists():
+            return {}
         try:
             return json.loads(self._ruta.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            return {}
+        except (OSError, json.JSONDecodeError) as error:
+            raise ErrorDeDatos(
+                f"no se pudo leer {self._ruta.name} ({error.__class__.__name__}). "
+                "Revise el archivo o regenerelo con 'python app.py init'"
+            ) from error
 
     def _persistir(self) -> None:
         contenido = json.dumps(self._a_diccionario(), indent=2, ensure_ascii=False)

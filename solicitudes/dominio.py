@@ -25,6 +25,10 @@ class TransicionInvalida(ErrorDeNegocio):
     """La operación no está permitida en el estado actual de la solicitud."""
 
 
+class ErrorDeDatos(ErrorDeNegocio):
+    """El almacenamiento existe pero no se puede interpretar."""
+
+
 class _EnumDeTexto(Enum):
     """Enum cuyo valor es el texto que escribe el usuario en la CLI."""
 
@@ -117,14 +121,49 @@ class DatosRegistro:
     fecha: str | None = None
 
 
+def parsear_fecha(texto: str) -> date:
+    try:
+        return date.fromisoformat(texto)
+    except ValueError:
+        raise ErrorValidacion(f"fecha invalida: {texto} (use AAAA-MM-DD)") from None
+
+
 @dataclass(frozen=True)
 class FiltroSolicitudes:
-    """Introduce Parameter Object: criterios combinables de búsqueda."""
+    """Introduce Parameter Object: criterios combinables de búsqueda (ya validados)."""
 
-    estado: str | None = None
-    tipo: str | None = None
-    prioridad: str | None = None
+    estado: Estado | None = None
+    tipo: TipoSolicitud | None = None
+    prioridad: Prioridad | None = None
     legajo: str | None = None
+
+    CLAVES = ("estado", "tipo", "prioridad", "legajo")
+
+    @classmethod
+    def desde_texto(cls, criterios: dict[str, str]) -> FiltroSolicitudes:
+        desconocidas = set(criterios) - set(cls.CLAVES)
+        if desconocidas:
+            clave = sorted(desconocidas)[0]
+            raise ErrorValidacion(f"filtro desconocido: {clave} (use estado, tipo, prioridad o legajo)")
+        return cls(
+            estado=_opcional(Estado, criterios.get("estado")),
+            tipo=_opcional(TipoSolicitud, criterios.get("tipo")),
+            prioridad=_opcional(Prioridad, criterios.get("prioridad")),
+            legajo=criterios.get("legajo"),
+        )
+
+    def admite(self, solicitud: Solicitud) -> bool:
+        criterios = (
+            (self.estado, solicitud.estado),
+            (self.tipo, solicitud.tipo),
+            (self.prioridad, solicitud.prioridad),
+            (self.legajo, solicitud.legajo),
+        )
+        return all(buscado is None or buscado == valor for buscado, valor in criterios)
+
+
+def _opcional(enum_de_texto: type[_EnumDeTexto], texto: str | None):
+    return None if texto is None else enum_de_texto.desde_texto(texto)
 
 
 @dataclass(frozen=True)
@@ -158,8 +197,15 @@ class Solicitud:
     vence: date
 
     @classmethod
-    def nueva(cls, id_solicitud: int, legajo: str, tipo: TipoSolicitud, prioridad: Prioridad,
-              descripcion: str, fecha: date) -> Solicitud:
+    def nueva(  # noqa: PLR0913, PLR0917 - constructor nombrado de la entidad (ver docs/code-review.md, OBS-07)
+        cls,
+        id_solicitud: int,
+        legajo: str,
+        tipo: TipoSolicitud,
+        prioridad: Prioridad,
+        descripcion: str,
+        fecha: date,
+    ) -> Solicitud:
         return cls(
             id=id_solicitud,
             legajo=legajo,
