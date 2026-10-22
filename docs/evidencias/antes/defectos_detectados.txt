@@ -1,0 +1,20 @@
+OK: datos de ejemplo cargados
+$ app.py estado abc resuelta
+ValueError: invalid literal for int() with base 10: 'abc'
+[exit=1] (traceback de Python, ver stderr)
+$ app.py estado 4
+IndexError: list index out of range
+[exit=1] (traceback de Python, ver stderr)
+$ app.py buscar estado
+ValueError: not enough values to unpack (expected 2, got 1)
+[exit=1] (traceback de Python, ver stderr)
+$ (datos.json corrupto) app.py reporte
+=== REPORTE DE SOLICITUDES ===
+Total: 0
+Pendientes: 0
+En proceso: 0
+Resueltas: 0
+Rechazadas: 0
+Vencidas sin cerrar: 0
+Por area:
+[exit=0]  <- el error de lectura se silencia y el reporte informa 0 solicitudes

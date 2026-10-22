@@ -1,0 +1,21 @@
+17	PLR2004	[ ] magic-value-comparison
+12	E501   	[ ] line-too-long
+11	E711   	[ ] none-comparison
+ 6	C901   	[ ] complex-structure
+ 5	SIM115 	[ ] open-file-with-context-handler
+ 5	PLR0912	[ ] too-many-branches
+ 2	ARG002 	[ ] unused-method-argument
+ 1	E741   	[ ] ambiguous-variable-name
+ 1	E722   	[ ] bare-except
+ 1	SIM108 	[ ] if-else-block-instead-of-if-exp
+ 1	SIM114 	[*] if-with-same-arms
+ 1	E401   	[*] multiple-imports-on-one-line
+ 1	UP015  	[*] redundant-open-modes
+ 1	PLR1714	[ ] repeated-equality-comparison
+ 1	PLR0913	[ ] too-many-arguments
+ 1	PLR0917	[ ] too-many-positional-arguments
+ 1	PLR0911	[ ] too-many-return-statements
+ 1	E712   	[ ] true-false-comparison
+ 1	F401   	[*] unused-import
+Found 70 errors.
+[*] 4 fixable with the `--fix` option (14 hidden fixes can be enabled with the `--unsafe-fixes` option).

@@ -1,0 +1,72 @@
+app.py:3:1: E401 [*] Multiple imports on one line
+app.py:3:14: F401 [*] `os` imported but unused
+app.py:16:17: SIM115 Use a context manager for opening files
+app.py:16:31: UP015 [*] Unnecessary mode argument
+app.py:19:9: E722 Do not use bare `except`
+app.py:26:111: E501 Line too long (112 > 110)
+app.py:27:111: E501 Line too long (116 > 110)
+app.py:35:111: E501 Line too long (130 > 110)
+app.py:36:111: E501 Line too long (116 > 110)
+app.py:37:111: E501 Line too long (132 > 110)
+app.py:38:111: E501 Line too long (131 > 110)
+app.py:39:111: E501 Line too long (132 > 110)
+app.py:40:111: E501 Line too long (117 > 110)
+app.py:43:13: SIM115 Use a context manager for opening files
+app.py:50:9: C901 `registrar` is too complex (16 > 8)
+app.py:50:9: PLR0913 Too many arguments in function definition (7 > 5)
+app.py:50:9: PLR0917 Too many positional arguments (7 > 5)
+app.py:50:9: PLR0912 Too many branches (19 > 12)
+app.py:50:74: ARG002 Unused method argument: `canal`
+app.py:50:81: ARG002 Unused method argument: `observaciones`
+app.py:56:19: E711 Comparison to `None` should be `cond is None`
+app.py:60:9: SIM114 [*] Combine `if` branches using logical `or` operator
+app.py:82:27: E711 Comparison to `None` should be `cond is None`
+app.py:85:31: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+app.py:89:9: SIM108 Use ternary operator `fecha = datetime.now() if fecha_str == None else datetime.strptime(fecha_str, "%Y-%m-%d")` instead of `if`-`else`-block
+app.py:89:25: E711 Comparison to `None` should be `cond is None`
+app.py:96:19: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+app.py:101:111: E501 Line too long (112 > 110)
+app.py:106:13: SIM115 Use a context manager for opening files
+app.py:109:111: E501 Line too long (112 > 110)
+app.py:112:9: C901 `cambiar_estado` is too complex (15 > 8)
+app.py:112:9: PLR0911 Too many return statements (8 > 6)
+app.py:112:9: PLR0912 Too many branches (15 > 12)
+app.py:117:17: E711 Comparison to `None` should be `cond is None`
+app.py:132:27: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+app.py:132:47: PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+app.py:135:38: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+app.py:138:43: E711 Comparison to `None` should be `cond is None`
+app.py:148:13: SIM115 Use a context manager for opening files
+app.py:154:111: E501 Line too long (114 > 110)
+app.py:158:9: C901 `asignar` is too complex (9 > 8)
+app.py:163:17: E711 Comparison to `None` should be `cond is None`
+app.py:170:17: E711 Comparison to `None` should be `cond is None`
+app.py:173:27: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+app.py:173:47: PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+app.py:180:13: SIM115 Use a context manager for opening files
+app.py:186:9: C901 `buscar` is too complex (18 > 8)
+app.py:186:9: PLR0912 Too many branches (17 > 12)
+app.py:187:9: E741 Ambiguous variable name: `l`
+app.py:190:26: E711 Comparison to `None` should be `cond is not None`
+app.py:195:60: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+app.py:197:61: PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+app.py:199:24: E711 Comparison to `None` should be `cond is not None`
+app.py:201:29: E711 Comparison to `None` should be `cond is not None`
+app.py:204:63: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+app.py:206:62: PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+app.py:208:26: E711 Comparison to `None` should be `cond is not None`
+app.py:221:111: E501 Line too long (148 > 110)
+app.py:224:9: C901 `reporte` is too complex (12 > 8)
+app.py:224:9: PLR0912 Too many branches (13 > 12)
+app.py:238:31: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+app.py:240:31: PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+app.py:275:5: C901 `main` is too complex (13 > 8)
+app.py:275:5: PLR0912 Too many branches (13 > 12)
+app.py:278:17: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+app.py:284:21: PLR2004 Magic value used in comparison, consider replacing `6` with a constant variable
+app.py:288:21: PLR2004 Magic value used in comparison, consider replacing `6` with a constant variable
+app.py:303:21: PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+app.py:309:8: PLR1714 Consider merging multiple comparisons: `r in (-1, False)`. Use a `set` if the elements are hashable.
+app.py:309:19: E712 Avoid equality comparisons to `False`; use `not r:` for false checks
+Found 70 errors.
+[*] 4 fixable with the `--fix` option (14 hidden fixes can be enabled with the `--unsafe-fixes` option).

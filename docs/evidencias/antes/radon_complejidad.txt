@@ -1,0 +1,13 @@
+app.py
+    M 186:4 Sistema.buscar - D (27)
+    M 112:4 Sistema.cambiar_estado - C (18)
+    M 50:4 Sistema.registrar - C (17)
+    F 275:0 main - C (14)
+    C 12:0 Sistema - C (13)
+    M 224:4 Sistema.reporte - C (13)
+    M 158:4 Sistema.asignar - B (10)
+    M 13:4 Sistema.__init__ - A (2)
+    M 22:4 Sistema.init - A (1)
+
+9 blocks (classes, functions, methods) analyzed.
+Average complexity: C (12.777777777777779)
