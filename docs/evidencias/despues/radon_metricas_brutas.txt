@@ -1,0 +1,120 @@
+app.py
+    LOC: 8
+    LLOC: 6
+    SLOC: 4
+    Comments: 0
+    Single comments: 1
+    Multi: 0
+    Blank: 3
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+solicitudes/cli.py
+    LOC: 158
+    LLOC: 99
+    SLOC: 111
+    Comments: 3
+    Single comments: 4
+    Multi: 4
+    Blank: 39
+    - Comment Stats
+        (C % L): 2%
+        (C % S): 3%
+        (C + M % L): 4%
+solicitudes/reportes.py
+    LOC: 88
+    LLOC: 52
+    SLOC: 64
+    Comments: 0
+    Single comments: 0
+    Multi: 5
+    Blank: 19
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 6%
+solicitudes/__init__.py
+    LOC: 0
+    LLOC: 0
+    SLOC: 0
+    Comments: 0
+    Single comments: 0
+    Multi: 0
+    Blank: 0
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+solicitudes/semilla.py
+    LOC: 52
+    LLOC: 3
+    SLOC: 50
+    Comments: 0
+    Single comments: 1
+    Multi: 0
+    Blank: 1
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+solicitudes/repositorio.py
+    LOC: 158
+    LLOC: 88
+    SLOC: 103
+    Comments: 5
+    Single comments: 10
+    Multi: 6
+    Blank: 39
+    - Comment Stats
+        (C % L): 3%
+        (C % S): 5%
+        (C + M % L): 7%
+solicitudes/dominio.py
+    LOC: 249
+    LLOC: 182
+    SLOC: 177
+    Comments: 1
+    Single comments: 11
+    Multi: 0
+    Blank: 61
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 1%
+        (C + M % L): 0%
+solicitudes/servicio.py
+    LOC: 77
+    LLOC: 44
+    SLOC: 62
+    Comments: 0
+    Single comments: 0
+    Multi: 4
+    Blank: 11
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 5%
+solicitudes/notificaciones.py
+    LOC: 24
+    LLOC: 13
+    SLOC: 13
+    Comments: 0
+    Single comments: 2
+    Multi: 0
+    Blank: 9
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+** Total **
+    LOC: 814
+    LLOC: 487
+    SLOC: 584
+    Comments: 9
+    Single comments: 29
+    Multi: 19
+    Blank: 182
+    - Comment Stats
+        (C % L): 1%
+        (C % S): 2%
+        (C + M % L): 3%

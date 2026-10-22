@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0
+rootdir: /home/claude/gestion-solicitudes
+configfile: pyproject.toml
+testpaths: tests
+plugins: platformdirs-4.12.3, anyio-4.15.1, cov-7.1.0
+collected 73 items
+
+tests/test_caracterizacion.py ..                                         [  2%]
+tests/test_cli.py ..............                                         [ 21%]
+tests/test_dominio.py ..............................                     [ 63%]
+tests/test_reportes.py ......                                            [ 71%]
+tests/test_repositorio.py ........                                       [ 82%]
+tests/test_servicio.py .............                                     [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                            Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------------------------------
+solicitudes/__init__.py             0      0      0      0   100%
+solicitudes/cli.py                 88      0     18      0   100%
+solicitudes/dominio.py            143      1     22      0    99%   37
+solicitudes/notificaciones.py       9      0      0      0   100%
+solicitudes/reportes.py            42      0      2      0   100%
+solicitudes/repositorio.py         59      0      2      0   100%
+solicitudes/semilla.py              1      0      0      0   100%
+solicitudes/servicio.py            43      0      6      0   100%
+---------------------------------------------------------------------------
+TOTAL                             385      1     50      0    99%
+============================== 73 passed in 2.99s ==============================
