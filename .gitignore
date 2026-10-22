@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+datos.json
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
