@@ -17,6 +17,14 @@ class ErrorValidacion(ErrorDeNegocio):
     """El dato ingresado no cumple las reglas del dominio."""
 
 
+class NoEncontrado(ErrorDeNegocio):
+    """La entidad buscada no existe."""
+
+
+class TransicionInvalida(ErrorDeNegocio):
+    """La operación no está permitida en el estado actual de la solicitud."""
+
+
 class _EnumDeTexto(Enum):
     """Enum cuyo valor es el texto que escribe el usuario en la CLI."""
 
@@ -117,3 +125,79 @@ class FiltroSolicitudes:
     tipo: str | None = None
     prioridad: str | None = None
     legajo: str | None = None
+
+
+@dataclass(frozen=True)
+class Estudiante:
+    legajo: str
+    nombre: str
+    email: str
+    carrera: str
+
+
+@dataclass(frozen=True)
+class Responsable:
+    id: str
+    nombre: str
+    area: str
+
+
+@dataclass
+class Solicitud:
+    """Entidad central. Concentra sus propias reglas de negocio (Move Method)."""
+
+    id: int
+    legajo: str
+    tipo: TipoSolicitud
+    prioridad: Prioridad
+    descripcion: str
+    estado: Estado
+    area: str
+    responsable_id: str | None
+    fecha: date
+    vence: date
+
+    @classmethod
+    def nueva(cls, id_solicitud: int, legajo: str, tipo: TipoSolicitud, prioridad: Prioridad,
+              descripcion: str, fecha: date) -> Solicitud:
+        return cls(
+            id=id_solicitud,
+            legajo=legajo,
+            tipo=tipo,
+            prioridad=prioridad,
+            descripcion=descripcion,
+            estado=Estado.PENDIENTE,
+            area=tipo.area,
+            responsable_id=None,
+            fecha=fecha,
+            vence=prioridad.calcular_vencimiento(fecha),
+        )
+
+    @property
+    def cerrada(self) -> bool:
+        return self.estado.es_final
+
+    def esta_vencida(self, hoy: date) -> bool:
+        return not self.cerrada and self.vence < hoy
+
+    def asignar(self, responsable: Responsable) -> None:
+        self._verificar_abierta()
+        if responsable.area != self.area:
+            raise ErrorValidacion(f"{responsable.nombre} no pertenece al area {self.area}")
+        self.responsable_id = responsable.id
+
+    def cambiar_estado(self, nuevo: Estado) -> None:
+        self._verificar_abierta()
+        if self.estado == Estado.PENDIENTE and nuevo == Estado.RESUELTA:
+            raise TransicionInvalida("no se puede resolver una solicitud que no esta en proceso")
+        if nuevo == Estado.EN_PROCESO and self.responsable_id is None:
+            raise TransicionInvalida(f"la solicitud #{self.id} no tiene responsable asignado")
+        if nuevo == self.estado:
+            raise TransicionInvalida("la solicitud ya esta en ese estado")
+        if nuevo == Estado.PENDIENTE:
+            raise TransicionInvalida("no se puede volver a pendiente")
+        self.estado = nuevo
+
+    def _verificar_abierta(self) -> None:
+        if self.cerrada:
+            raise TransicionInvalida(f"la solicitud #{self.id} ya esta cerrada")
