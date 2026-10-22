@@ -1,12 +1,26 @@
 # Sistema de Gestion de Solicitudes Academicas
 # version 1 - hecho rapido para la demo
-import json, os, sys
-from datetime import datetime, timedelta
+import json
+import sys
+from datetime import date
+
+from solicitudes.dominio import (
+    DatosRegistro,
+    ErrorValidacion,
+    Estado,
+    FiltroSolicitudes,
+    Prioridad,
+    TipoSolicitud,
+    validar_descripcion,
+)
 
 ARCHIVO = "datos.json"
 
-# estados: 0=pendiente 1=en proceso 2=resuelta 3=rechazada
-# prioridad: 1=alta 2=media 3=baja
+# Codigos con los que se persisten estados y prioridades en datos.json
+CODIGO_ESTADO = {Estado.PENDIENTE: 0, Estado.EN_PROCESO: 1, Estado.RESUELTA: 2, Estado.RECHAZADA: 3}
+ESTADO_POR_CODIGO = {codigo: estado for estado, codigo in CODIGO_ESTADO.items()}
+CODIGO_PRIORIDAD = {Prioridad.ALTA: 1, Prioridad.MEDIA: 2, Prioridad.BAJA: 3}
+PRIORIDAD_POR_CODIGO = {codigo: prioridad for prioridad, codigo in CODIGO_PRIORIDAD.items()}
 
 
 class Sistema:
@@ -43,23 +57,7 @@ class Sistema:
 
     @staticmethod
     def _esta_cerrada(solicitud):
-        return solicitud["estado"] in (2, 3)
-
-    @staticmethod
-    def _validar_descripcion(descripcion):
-        if descripcion is None or len(descripcion.strip()) == 0:
-            return "la descripcion es obligatoria"
-        if len(descripcion) > 200:
-            return "la descripcion supera los 200 caracteres"
-        return None
-
-    @staticmethod
-    def _calcular_vencimiento(fecha, prioridad):
-        if prioridad == 1:
-            return fecha + timedelta(days=2)
-        if prioridad == 2:
-            return fecha + timedelta(days=5)
-        return fecha + timedelta(days=10)
+        return ESTADO_POR_CODIGO[solicitud["estado"]].es_final
 
     def init(self):
         self.d = {
@@ -86,95 +84,63 @@ class Sistema:
         print("OK: datos de ejemplo cargados")
         return True
 
-    # registra una solicitud nueva
-    def registrar(self, legajo, tipo, prioridad, descripcion, fecha_str, canal, observaciones):
-        # validar estudiante
-        if self._buscar_estudiante(legajo) is None:
-            print("ERROR: el legajo " + legajo + " no existe")
+    def registrar(self, datos: DatosRegistro):
+        try:
+            if self._buscar_estudiante(datos.legajo) is None:
+                raise ErrorValidacion("el legajo " + datos.legajo + " no existe")
+            tipo = TipoSolicitud.desde_texto(datos.tipo)
+            prioridad = Prioridad.desde_texto(datos.prioridad)
+            descripcion = validar_descripcion(datos.descripcion)
+        except ErrorValidacion as error:
+            print("ERROR: " + str(error))
             return -1
-        # validar tipo y calcular area
-        if tipo == "certificado":
-            area = "Bedelia"
-        elif tipo == "cambio_comision":
-            area = "Bedelia"
-        elif tipo == "equivalencia":
-            area = "Departamento Academico"
-        elif tipo == "reclamo_nota":
-            area = "Docencia"
-        else:
-            print("ERROR: tipo de solicitud invalido: " + tipo)
-            return -1
-        # validar prioridad
-        if prioridad == "alta":
-            p = 1
-        elif prioridad == "media":
-            p = 2
-        elif prioridad == "baja":
-            p = 3
-        else:
-            print("ERROR: prioridad invalida: " + prioridad)
-            return -1
-        # validar descripcion
-        error = self._validar_descripcion(descripcion)
-        if error is not None:
-            print("ERROR: " + error)
-            return -1
-        # fecha
-        if fecha_str is None:
-            fecha = datetime.now()
-        else:
-            fecha = datetime.strptime(fecha_str, "%Y-%m-%d")
-        # calcular vencimiento segun prioridad
-        vence = self._calcular_vencimiento(fecha, p)
+        fecha = date.today() if datos.fecha is None else date.fromisoformat(datos.fecha)
+        vencimiento = prioridad.calcular_vencimiento(fecha)
         nuevo_id = len(self.d["solicitudes"]) + 1
-        s = {"id": nuevo_id, "legajo": legajo, "tipo": tipo, "prioridad": p, "descripcion": descripcion.strip(),
-             "estado": 0, "area": area, "responsable": None, "fecha": fecha.strftime("%Y-%m-%d"),
-             "vence": vence.strftime("%Y-%m-%d")}
-        # canal y observaciones por ahora no se usan
-        self.d["solicitudes"].append(s)
+        solicitud = {"id": nuevo_id, "legajo": datos.legajo, "tipo": tipo.value,
+                     "prioridad": CODIGO_PRIORIDAD[prioridad], "descripcion": descripcion,
+                     "estado": CODIGO_ESTADO[Estado.PENDIENTE], "area": tipo.area, "responsable": None,
+                     "fecha": fecha.isoformat(), "vence": vencimiento.isoformat()}
+        self.d["solicitudes"].append(solicitud)
         self._guardar()
-        print("OK: solicitud #" + str(nuevo_id) + " registrada (area: " + area + ", vence: " + s["vence"] + ")")
+        print("OK: solicitud #" + str(nuevo_id) + " registrada (area: " + tipo.area
+              + ", vence: " + solicitud["vence"] + ")")
         return nuevo_id
 
-    def cambiar_estado(self, id, nuevo):
-        solicitud = self._buscar_solicitud(id)
+    def cambiar_estado(self, id_solicitud, texto_estado):
+        solicitud = self._buscar_solicitud(id_solicitud)
         if solicitud is None:
-            print("ERROR: no existe la solicitud #" + str(id))
+            print("ERROR: no existe la solicitud #" + str(id_solicitud))
             return False
-        if nuevo == "pendiente":
-            n = 0
-        elif nuevo == "en_proceso":
-            n = 1
-        elif nuevo == "resuelta":
-            n = 2
-        elif nuevo == "rechazada":
-            n = 3
-        else:
-            print("ERROR: estado invalido: " + nuevo)
+        try:
+            nuevo = Estado.desde_texto(texto_estado)
+        except ErrorValidacion as error:
+            print("ERROR: " + str(error))
             return False
+        actual = ESTADO_POR_CODIGO[solicitud["estado"]]
         # reglas de transicion
-        if self._esta_cerrada(solicitud):
-            print("ERROR: la solicitud #" + str(id) + " ya esta cerrada")
+        if actual.es_final:
+            print("ERROR: la solicitud #" + str(id_solicitud) + " ya esta cerrada")
             return False
-        if solicitud["estado"] == 0 and n == 2:
+        if actual == Estado.PENDIENTE and nuevo == Estado.RESUELTA:
             print("ERROR: no se puede resolver una solicitud que no esta en proceso")
             return False
-        if n == 1 and solicitud["responsable"] is None:
-            print("ERROR: la solicitud #" + str(id) + " no tiene responsable asignado")
+        if nuevo == Estado.EN_PROCESO and solicitud["responsable"] is None:
+            print("ERROR: la solicitud #" + str(id_solicitud) + " no tiene responsable asignado")
             return False
-        if n == solicitud["estado"]:
+        if nuevo == actual:
             print("ERROR: la solicitud ya esta en ese estado")
             return False
-        if n == 0:
+        if nuevo == Estado.PENDIENTE:
             print("ERROR: no se puede volver a pendiente")
             return False
-        solicitud["estado"] = n
+        solicitud["estado"] = CODIGO_ESTADO[nuevo]
         self._guardar()
         # notificar al estudiante
         estudiante = self._buscar_estudiante(solicitud["legajo"])
         print("[EMAIL a " + estudiante["email"] + "] Su solicitud #" + str(solicitud["id"])
-              + " cambio a estado: " + nuevo)
-        print("OK: solicitud #" + str(solicitud["id"]) + " ahora esta " + nuevo)
+              + " cambio a estado: " + nuevo.value)
+        print("OK: solicitud #" + str(solicitud["id"]) + " ahora esta " + nuevo.value)
         return True
 
     def asignar(self, id, resp_id):
@@ -197,44 +163,40 @@ class Sistema:
         print("OK: solicitud #" + str(solicitud["id"]) + " asignada a " + responsable["nombre"])
         return True
 
-    def buscar(self, estado, tipo, prioridad, legajo):
-        l = []
-        for s in self.d["solicitudes"]:
-            ok = True
-            if estado != None:
-                if estado == "pendiente" and s["estado"] != 0:
-                    ok = False
-                if estado == "en_proceso" and s["estado"] != 1:
-                    ok = False
-                if estado == "resuelta" and s["estado"] != 2:
-                    ok = False
-                if estado == "rechazada" and s["estado"] != 3:
-                    ok = False
-            if tipo != None and s["tipo"] != tipo:
-                ok = False
-            if prioridad != None:
-                if prioridad == "alta" and s["prioridad"] != 1:
-                    ok = False
-                if prioridad == "media" and s["prioridad"] != 2:
-                    ok = False
-                if prioridad == "baja" and s["prioridad"] != 3:
-                    ok = False
-            if legajo != None and s["legajo"] != legajo:
-                ok = False
-            if ok:
-                l.append(s)
-        if len(l) == 0:
+    @staticmethod
+    def _cumple_filtro(solicitud, filtro: FiltroSolicitudes):
+        estado = ESTADO_POR_CODIGO[solicitud["estado"]].value
+        prioridad = PRIORIDAD_POR_CODIGO[solicitud["prioridad"]].value
+        criterios = (
+            (filtro.estado, estado, {e.value for e in Estado}),
+            (filtro.tipo, solicitud["tipo"], None),
+            (filtro.prioridad, prioridad, {p.value for p in Prioridad}),
+            (filtro.legajo, solicitud["legajo"], None),
+        )
+        for buscado, valor, valores_validos in criterios:
+            if buscado is None:
+                continue
+            if valores_validos is not None and buscado not in valores_validos:
+                continue  # comportamiento heredado: un valor desconocido no filtra
+            if buscado != valor:
+                return False
+        return True
+
+    def buscar(self, filtro: FiltroSolicitudes):
+        encontradas = [s for s in self.d["solicitudes"] if self._cumple_filtro(s, filtro)]
+        if not encontradas:
             print("No se encontraron solicitudes")
-        for s in l:
-            est = ["pendiente", "en_proceso", "resuelta", "rechazada"][s["estado"]]
-            pr = ["", "alta", "media", "baja"][s["prioridad"]]
-            responsable = self._buscar_responsable(s["responsable"])
-            resp = responsable["nombre"] if responsable else "-"
-            print("#" + str(s["id"]) + " | " + s["legajo"] + " | " + s["tipo"] + " | " + pr + " | " + est + " | " + resp + " | " + s["descripcion"])
-        return l
+        for solicitud in encontradas:
+            estado = ESTADO_POR_CODIGO[solicitud["estado"]].value
+            prioridad = PRIORIDAD_POR_CODIGO[solicitud["prioridad"]].value
+            responsable = self._buscar_responsable(solicitud["responsable"])
+            nombre_responsable = responsable["nombre"] if responsable else "-"
+            print(" | ".join(["#" + str(solicitud["id"]), solicitud["legajo"], solicitud["tipo"], prioridad,
+                              estado, nombre_responsable, solicitud["descripcion"]]))
+        return encontradas
 
     def reporte(self, formato):
-        hoy = datetime.now().strftime("%Y-%m-%d")
+        hoy = date.today().isoformat()
         total = len(self.d["solicitudes"])
         pend = 0
         proc = 0
@@ -299,7 +261,7 @@ def main():
         f = None
         if len(a) > 6:
             f = a[6]
-        r = s.registrar(a[2], a[3], a[4], a[5], f, "web", "")
+        r = s.registrar(DatosRegistro(legajo=a[2], tipo=a[3], prioridad=a[4], descripcion=a[5], fecha=f))
     elif a[1] == "estado":
         r = s.cambiar_estado(a[2], a[3])
     elif a[1] == "asignar":
@@ -309,7 +271,7 @@ def main():
         for x in a[2:]:
             k, v = x.split("=")
             filtros[k] = v
-        r = s.buscar(filtros["estado"], filtros["tipo"], filtros["prioridad"], filtros["legajo"])
+        r = s.buscar(FiltroSolicitudes(filtros["estado"], filtros["tipo"], filtros["prioridad"], filtros["legajo"]))
     elif a[1] == "reporte":
         fmt = "texto"
         if len(a) > 2:
