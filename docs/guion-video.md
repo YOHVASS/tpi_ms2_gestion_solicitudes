@@ -17,15 +17,3 @@ la presentación, el repositorio y la terminal.
 | 11:30 | Code review | `docs/code-review.md` | Checklist, OBS-04 (alta) y cómo se corrigió, criterios de aceptación |
 | 12:30 | Conclusiones | Diapositiva final | Aprendizajes, límites, mejoras futuras (State, SQLite, argparse) |
 
-## Preguntas que la cátedra podría hacer (practicar en voz alta)
-
-1. ¿Qué diferencia hay entre calidad externa e interna? Dé un ejemplo de este sistema.
-2. ¿Por qué escribió el golden master antes de refactorizar y no pruebas unitarias?
-3. ¿Qué hubiera pasado si cambiaba un mensaje de error durante R-03?
-4. ¿Por qué `cambiar_estado` está en `Solicitud` y no en el servicio?
-5. ¿Dónde se ve DIP? ¿Cómo prueba el servicio sin tocar el disco?
-6. ¿Qué es un mock y en qué prueba lo usó? ¿En qué se diferencia del stub del reloj?
-7. ¿Por qué los estados se siguen guardando como números en `datos.json`?
-8. ¿Cómo agregaría un formato de reporte en PDF? ¿Qué archivos tocaría?
-9. ¿Qué observación del code review fue más importante y por qué?
-10. Las correcciones D-01..D-06 cambian el comportamiento: ¿por qué no rompen la consigna?
