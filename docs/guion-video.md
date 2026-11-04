@@ -6,7 +6,7 @@ la presentación, el repositorio y la terminal.
 
 | Min. | Bloque | Qué mostrar | Qué decir (ideas, no leer) |
 |---|---|---|---|
-| 0:00 | Presentación | Cámara + portada | Nombre completo, comisión, materia, por qué entrega individual |
+| 0:00 | Presentación | Cámara + portada | Nombre completo, comisión, materia, qué hizo cada integrante |
 | 0:45 | Problema y sistema base | Diapositiva del caso + `git checkout estado-inicial` + `python app.py reporte` | Qué hace el sistema, actores, que *funciona* |
 | 2:00 | Calidad externa vs. interna | Tabla de métricas antes | "Funciona, pero..." CC 27, 70 advertencias, 1 clase con 6 responsabilidades, 0 pruebas |
 | 3:30 | Code smells | Abrir `app.py` base en 2-3 smells (God Class, guardado ×4, números mágicos, `except: pass`) | Impacto en el costo del cambio y prioridad |
