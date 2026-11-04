@@ -1,7 +1,7 @@
 # Code review técnico
 
 - **Alcance:** diff `estado-inicial..etapa-pruebas` (todo el paquete `solicitudes/`, `app.py` y `tests/`).
-- **Revisora:** Yohanna Díaz Monroy (revisión individual con checklist; ver nota de modalidad en el informe).
+- **Revisores:** Natalia Gutierrez, Gino Canevaro y Yohanna Díaz Monroy (revisión con checklist).
 - **Herramientas de apoyo:** ruff (linter + formatter), radon (complejidad y mantenibilidad), pytest-cov (cobertura de ramas).
 - **Regla de feedback:** se critica el código, no a la persona; cada observación explica el impacto y propone una acción.
 
